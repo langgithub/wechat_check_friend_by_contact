@@ -65,8 +65,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     // 提交参数
-    private int count = 0;
-
     private String IMEI;
 
     private String Uin;
@@ -79,6 +77,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mCurrApkPath="/data/data/" + getPackageName() + "/";
 
+    }
+
+    public void read(View v){
+        checkFriends();
     }
 
     /**
@@ -149,9 +151,9 @@ public class MainActivity extends AppCompatActivity {
             File file = mWxDbPathList.get(i);
             String copyFilePath = mCurrApkPath + COPY_WX_DATA_DB;
             //将微信数据库拷贝出来，因为直接连接微信的db，会导致微信崩溃
-            copyFile(file.getAbsolutePath(), copyFilePath);
+//            copyFile(file.getAbsolutePath(), copyFilePath);
             File copyWxDataDb = new File(copyFilePath);
-            System.out.println("delete 微信db path>>>>>>>>"+copyFilePath);
+            System.out.println("delete copy的微信 db path>>>>>>>>"+copyFilePath);
             deleteConcate(copyWxDataDb);
         }
     }
@@ -198,6 +200,7 @@ public class MainActivity extends AppCompatActivity {
         searchFile(wxDataDir, WX_DB_FILE_NAME);
 
 //        System.out.println("查询数据库文件");
+
         //处理多账号登陆情况
         for (int i = 0; i < mWxDbPathList.size(); i++) {
             File file = mWxDbPathList.get(i);
@@ -213,6 +216,48 @@ public class MainActivity extends AppCompatActivity {
     public void delete(View v){
         //删除联系人
         ContentProviderHelper.deleteContact(MainActivity.this);
+    }
+
+    /**
+     * 拿去一个手机号码
+     * @param v
+     */
+    public void add(View v){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String urlGetPhone="http://172.17.2.156:5000/get_one";
+                ByteArrayOutputStream buffer=getContent(urlGetPhone);
+                if(buffer!=null) {
+                    //获取到联系人，将其添加到通讯录
+                    ArrayList<ContentProviderHelper.ContactMan> contactMen = new ArrayList<>();
+                    JSONArray jsonArray = null;
+                    try {
+                        jsonArray = new JSONArray(buffer.toString());
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            String phone = jsonArray.getString(i);
+                            ContentProviderHelper.ContactMan cc = new ContentProviderHelper().new ContactMan();
+                            cc.setName("p" + phone);
+                            cc.setNumbers(phone);
+                            contactMen.add(cc);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    boolean flag = ContentProviderHelper.insertContactMen(MainActivity.this, contactMen);
+                }
+            }
+        }).start();
+
+    }
+
+    /**
+     * 点击微信
+     * @param v
+     */
+    public void click(View v){
+        execRootCmd("am start com.tencent.mm/com.tencent.mm.plugin.account.bind.ui.MobileFriendUI");
     }
 
     @Override
@@ -297,55 +342,58 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
 
 
+                //删除手机联系人
+                ContentProviderHelper.deleteContact(MainActivity.this);
+                Log.i("wechat_check_friend","删除短信联系人");
+
+
                 //关闭微信
 //                execRootCmd("am force-stop com.tencent.mm");
                 //清赶紧数据库
 //                File wxDataDir = new File(WX_DB_DIR_PATH);
 //                deleteSearchFile(wxDataDir, WX_DB_FILE_NAME);
 //                execRootCmd("am start com.tencent.mm/com.tencent.mm.ui.LauncherUI");
-                deleteContact();
-                Log.i("wechat_check_friend","删除微信数据库");
+                execRootCmd("rm -rf /data/data/com.lang.wechat_check_friend_by_contact/wx_data.db");
 
-                //删除手机联系人
-                ContentProviderHelper.deleteContact(MainActivity.this);
-                Log.i("wechat_check_friend","删除短信联系人");
-
-
-                //访问接口获取联系人
-                String urlGetPhone="http://172.17.2.74:5000/get_phone";
-                ByteArrayOutputStream buffer=getContent(urlGetPhone);
-                if(buffer!=null){
-                    //获取到联系人，将其添加到通讯录
-                    ArrayList<ContentProviderHelper.ContactMan> contactMen = new ArrayList<>();
+//                deleteContact();
+//                Log.i("wechat_check_friend","删除微信数据库");
+                boolean running=true;
+                while(running){
+                    //访问接口获取联系人
+                    String urlGetPhone="http://172.17.2.156:5000/get_phone";
+                    ByteArrayOutputStream buffer=getContent(urlGetPhone);
+                    if(buffer!=null){
+                        //获取到联系人，将其添加到通讯录
+                        ArrayList<ContentProviderHelper.ContactMan> contactMen = new ArrayList<>();
 //                ContentProviderHelper.ContactMan c = new ContentProviderHelper().new ContactMan();
 //                c.setName("周杰伦");
 //                c.setNumbers("15775691981");
 //                contactMen.add(c);
-                    JSONArray jsonArray = null;
-                    try {
-                        jsonArray = new JSONArray(buffer.toString());
-                        for (int i=0; i < jsonArray.length(); i++)    {
+                        JSONArray jsonArray = null;
+                        try {
+                            jsonArray = new JSONArray(buffer.toString());
+                            for (int i=0; i < jsonArray.length(); i++)    {
 //                            JSONObject jsonObject = jsonArray.getJSONObject(i);
 //                            String phone = jsonObject.getString("phone");
-                            String phone=jsonArray.getString(i);
-                            ContentProviderHelper.ContactMan cc = new ContentProviderHelper().new ContactMan();
-                            cc.setName("p"+phone);
-                            cc.setNumbers(phone);
-                            contactMen.add(cc);
+                                String phone=jsonArray.getString(i);
+                                ContentProviderHelper.ContactMan cc = new ContentProviderHelper().new ContactMan();
+                                cc.setName("p"+phone);
+                                cc.setNumbers(phone);
+                                contactMen.add(cc);
 
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
 
 
 
 
-                    boolean flag=ContentProviderHelper.insertContactMen(MainActivity.this, contactMen);
-                    if (flag){
-                        Log.i("wechat_check_friend","添加完成");
-                        // 打开微信
-                        execRootCmd("am start com.tencent.mm/com.tencent.mm.plugin.account.bind.ui.MobileFriendUI");
+                        boolean flag=ContentProviderHelper.insertContactMen(MainActivity.this, contactMen);
+                        if (flag){
+                            Log.i("wechat_check_friend","添加完成");
+                            // 打开微信
+                            execRootCmd("am start com.tencent.mm/com.tencent.mm.plugin.account.bind.ui.MobileFriendUI");
 //                    Intent intent = new Intent();
 //                    ComponentName cmp = new ComponentName("com.tencent.mm", "com.tencent.mm.plugin.account.bind.ui.MobileFriendUI");
 //                    intent.setAction(Intent.ACTION_MAIN);
@@ -354,24 +402,65 @@ public class MainActivity extends AppCompatActivity {
 //                    intent.setComponent(cmp);
 //                    startActivity(intent);
 
-                        Log.i("wechat_check_friend","回来，检测微信数据");
-                        try {
 
-                            Thread.sleep(10000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                            try {
+                                Log.i("wechat_check_friend","sleep20000 回来，检测微信数据");
+                                Thread.sleep(30000);
+
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            //检查数据更新情况
+//                            checkFriends();
+//                            execRootCmd("am start com.lang.wechat_check_friend_by_contact/.MainActivity");
+//                            Intent intent = new Intent(Intent.ACTION_MAIN);
+//                            intent.addCategory(Intent.CATEGORY_HOME);
+//                            startActivity(intent);
+
+                            //删除手机联系人
+//                            ContentProviderHelper.deleteContact(MainActivity.this);
+                            Log.i("wechat_check_friend","删除联系人触发的微信保存");
+
+//                            try {
+//                                Log.i("wechat_check_friend","删除联系人触发的微信保存");
+//                                Thread.sleep(2000);
+//                            } catch (InterruptedException e) {
+//                                e.printStackTrace();
+//                            }
+
+                            checkFriends();
+//                            try {
+//                                Log.i("wechat_check_friend","sleep2000 测试是否是checkFriends触发的");
+//                                Thread.sleep(2000);
+//                            } catch (InterruptedException e) {
+//                                e.printStackTrace();
+//                            }
+                            //adb shell input keyevent 4
+//                            execRootCmd("input keyevent 4");
+//                            execRootCmd("input keyevent 4");
+//                            execRootCmd("input keyevent 4");
+
+
+
+//                            Log.i("wechat_check_friend","bed！！！！");
+//
+//
+//                            //删除手机联系人
+                            ContentProviderHelper.deleteContact(MainActivity.this);
+//
+                            checkFriends();
+
+
+
+                        }else {
+                            Log.i("wechat_check_friend","添加失败");
+                            running=false;
                         }
-                        //检查数据更新情况
-                        checkFriends();
 
-
-
-
-                    }else {
-                        Log.i("wechat_check_friend","添加失败");
                     }
 
                 }
+
 
             }
         }).start();
@@ -637,6 +726,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             c1= db.rawQuery("select * from addr_upload2; ",null);
+            int count=0;
             while (c1.moveToNext()) {
 
                 String id = c1.getString(c1.getColumnIndex("id"));
@@ -662,7 +752,7 @@ public class MainActivity extends AppCompatActivity {
                 String showhead = c1.getString(c1.getColumnIndex("showhead"));
 
 
-                System.out.println(count +" --------"+id+" >>>  "+md5+" >>> "+peopleid+" >>> "+uploadtime+" >>> "
+                Log.i("wechat_check_friend",count +" --------"+id+" >>>  "+md5+" >>> "+peopleid+" >>> "+uploadtime+" >>> "
                         +realname+" >>> "+realnamepyinitial+" >>> "+realnamequanpin+" >>> "+username+" >>> "+nickname
                         +" >>> "+nicknamepyinitial+" >>> "+nicknamequanpin+" >>> "+type+" >>> "+moblie+" >>> "+email
                         +" >>> "+status+" >>> "+reserved1+" >>> "+reserved2+" >>> "+reserved3

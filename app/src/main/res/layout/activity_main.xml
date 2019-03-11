@@ -32,6 +32,34 @@
             tools:ignore="MissingConstraints"
             tools:layout_editor_absoluteX="204dp"
             tools:layout_editor_absoluteY="47dp" />
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="read"
+            android:text="读取微信好友"
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteX="204dp"
+            tools:layout_editor_absoluteY="47dp" />
+
+        <Button
+            android:id="@+id/button4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="add"
+            android:text="添加一位联系人"
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteX="204dp"
+            tools:layout_editor_absoluteY="47dp" />
+        <Button
+            android:id="@+id/button5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="click"
+            android:text="点击微信刷新"
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteX="204dp"
+            tools:layout_editor_absoluteY="47dp" />
     </LinearLayout>
 
 
