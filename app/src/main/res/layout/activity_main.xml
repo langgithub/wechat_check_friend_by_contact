@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="doTask"
-            android:text="从远端添加联系人"
+            android:text="后台批量检测微信是否注册"
             tools:ignore="MissingConstraints"
             tools:layout_editor_absoluteX="37dp"
             tools:layout_editor_absoluteY="47dp" />
@@ -27,8 +27,8 @@
             android:id="@+id/button2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="delete"
-            android:text="删除联系人信息"
+            android:onClick="deleteContact"
+            android:text="删除所有联系人信息"
             tools:ignore="MissingConstraints"
             tools:layout_editor_absoluteX="204dp"
             tools:layout_editor_absoluteY="47dp" />
@@ -36,8 +36,8 @@
             android:id="@+id/button3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="read"
-            android:text="读取微信好友"
+            android:onClick="readWeChatDB"
+            android:text="读取微信好友列表(需要登陆微信)"
             tools:ignore="MissingConstraints"
             tools:layout_editor_absoluteX="204dp"
             tools:layout_editor_absoluteY="47dp" />
@@ -46,8 +46,8 @@
             android:id="@+id/button4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="add"
-            android:text="添加一位联系人"
+            android:onClick="addContact"
+            android:text="添加一位联系人(需要搭建web服务)"
             tools:ignore="MissingConstraints"
             tools:layout_editor_absoluteX="204dp"
             tools:layout_editor_absoluteY="47dp" />
@@ -55,8 +55,8 @@
             android:id="@+id/button5"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="click"
-            android:text="点击微信刷新"
+            android:onClick="openMobileFriendUI"
+            android:text="点击进入微信 MobileFriendUI"
             tools:ignore="MissingConstraints"
             tools:layout_editor_absoluteX="204dp"
             tools:layout_editor_absoluteY="47dp" />
