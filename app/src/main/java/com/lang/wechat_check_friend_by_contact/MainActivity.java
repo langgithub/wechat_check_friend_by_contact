@@ -314,22 +314,6 @@ public class MainActivity extends AppCompatActivity {
         return byteArrayOutputStream;
     }
 
-    //方法一：使用JSONObject
-    private void parseJSONWithJSONObject(String jsonData) {
-        try
-        {
-            JSONArray jsonArray = new JSONArray(jsonData);
-            for (int i=0; i < jsonArray.length(); i++)    {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                String phone = jsonObject.getString("phone");
-
-            }
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
 
 
     /**
@@ -405,7 +389,7 @@ public class MainActivity extends AppCompatActivity {
 
                             try {
                                 Log.i("wechat_check_friend","sleep20000 回来，检测微信数据");
-                                Thread.sleep(30000);
+                                Thread.sleep(40000);
 
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
@@ -429,12 +413,12 @@ public class MainActivity extends AppCompatActivity {
 //                            }
 
                             checkFriends();
-//                            try {
-//                                Log.i("wechat_check_friend","sleep2000 测试是否是checkFriends触发的");
-//                                Thread.sleep(2000);
-//                            } catch (InterruptedException e) {
-//                                e.printStackTrace();
-//                            }
+                            try {
+                                Log.i("wechat_check_friend","sleep2000 重复");
+                                Thread.sleep(2000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                             //adb shell input keyevent 4
 //                            execRootCmd("input keyevent 4");
 //                            execRootCmd("input keyevent 4");
@@ -447,6 +431,12 @@ public class MainActivity extends AppCompatActivity {
 //
 //                            //删除手机联系人
                             ContentProviderHelper.deleteContact(MainActivity.this);
+                            try {
+                                Log.i("wechat_check_friend","sleep2000 重复");
+                                Thread.sleep(2000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
 //
                             checkFriends();
 
