@@ -20,7 +20,8 @@ public class DBHelper {
      *
      * @param dbFile
      */
-    public void openWxDb(File dbFile,String mDbPassword,Context context) {
+    public String openWxDb(File dbFile, String mDbPassword, Context context) {
+        String data="";
         SQLiteDatabase.loadLibs(context);
         SQLiteDatabaseHook hook = new SQLiteDatabaseHook() {
             public void preKey(SQLiteDatabase database) {
@@ -35,6 +36,7 @@ public class DBHelper {
         Cursor c1=null;
 
         try {
+            data+="{\"result\":[";
             //打开数据库连接
             db= SQLiteDatabase.openOrCreateDatabase(dbFile, mDbPassword, null, hook);
 
@@ -53,8 +55,6 @@ public class DBHelper {
 //                System.out.println(sql+";");
 //
 //            }
-
-
 
 
             c1= db.rawQuery("select * from addr_upload2; ",null);
@@ -90,8 +90,12 @@ public class DBHelper {
                         +" >>> "+status+" >>> "+reserved1+" >>> "+reserved2+" >>> "+reserved3
                         +" >>> "+reserved4+" >>> "+lvbuf+" >>> "+showhead);
                 count++;
+                data+="{\"phone\":"+moblie+",\"wxid\":\""+username+"\"},";
 
             }
+            data=data.substring(0,data.length()-1);
+            data+="]}";
+            Log.i("wechat_check_friend",data);
             //username moblie
         } catch (Exception e) {
             e.printStackTrace();
@@ -103,6 +107,7 @@ public class DBHelper {
                 db.close();
             }
         }
+        return data;
     }
 
     /**

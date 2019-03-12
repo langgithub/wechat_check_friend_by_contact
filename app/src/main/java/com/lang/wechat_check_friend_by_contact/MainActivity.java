@@ -141,9 +141,18 @@ public class MainActivity extends AppCompatActivity {
                                 Log.i("wechat_check_friend", "目前是4s一个手机号，当前休息40秒");
                                 Thread.sleep(40000);
 
-                                weChatUtils.checkFriends(getApplicationContext(), phone);
+                                String data=weChatUtils.checkFriends(getApplicationContext(), phone);
                                 Log.i("wechat_check_friend", "sleep2000 防止微信网络请求异常导致微信好友添加没刷新完");
                                 Thread.sleep(2000);
+                                if (!"".equals(data)){
+                                    String saveUrl = "http://172.17.2.156:5000/save_data?data="+data;
+                                    String result = webHttp.getContent(saveUrl);
+                                    if (result==null){
+                                        running = false;
+                                        break;
+                                    }
+                                    Log.i("wechat_check_friend",result);
+                                }
 
                                 if (refreshCount){
                                     //模拟返回键
@@ -152,9 +161,18 @@ public class MainActivity extends AppCompatActivity {
                                 }
 
                                 ContentProviderHelper.deleteContact(MainActivity.this);
-                                weChatUtils.checkFriends(getApplicationContext(), phone);
+                                data=weChatUtils.checkFriends(getApplicationContext(), phone);
                                 Log.i("wechat_check_friend", "deleteContactsleep2000,激活触发微信添加更多activity");
                                 Thread.sleep(2000);
+                                if (!"".equals(data)){
+                                    String saveUrl = "http://172.17.2.156:5000/save_data?data="+data;
+                                    String result = webHttp.getContent(saveUrl);
+                                    if (result==null){
+                                        running = false;
+                                        break;
+                                    }
+                                    Log.i("wechat_check_friend",result);
+                                }
 
                                 refreshCount=true;
                             } else {

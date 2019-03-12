@@ -153,7 +153,7 @@ public class WeChatUtils {
     }
 
 
-    public void checkFriends(Context context,TelephonyManager phone){
+    public String checkFriends(Context context,TelephonyManager phone){
 
         Log.i("wechat_check_friend", "读取微信数据库");
 
@@ -174,7 +174,7 @@ public class WeChatUtils {
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            return;
+            return "";
         }
         IMEI = phone.getDeviceId();
 
@@ -193,9 +193,11 @@ public class WeChatUtils {
                 f.copyFile(file.getAbsolutePath(), copyFilePath);
                 File copyWxDataDb = new File(copyFilePath);
                 System.out.println("copy path>>>>>>>>"+copyFilePath);
-                dbHelper.openWxDb(copyWxDataDb,password,context);
+                //直接返回，没有多账号登陆
+                return dbHelper.openWxDb(copyWxDataDb,password,context);
             }
         }
+        return "";
     }
 
 }
