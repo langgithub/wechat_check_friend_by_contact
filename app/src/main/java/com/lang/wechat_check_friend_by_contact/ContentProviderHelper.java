@@ -11,6 +11,7 @@ import android.provider.ContactsContract.CommonDataKinds.StructuredName;
 import android.provider.ContactsContract.Data;
 import android.provider.ContactsContract.RawContacts;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +46,7 @@ public class ContentProviderHelper {
 
 
     public static boolean insertContactMen(Context context, List<ContactMan> contactManList) {
+        Log.i("wechat_check_friend", "批量添加手机联系人");
         boolean flag=false;
         if (contactManList == null) {
             return flag;
@@ -87,6 +89,7 @@ public class ContentProviderHelper {
     }
 
     public static void deleteContact(Context context){
+        Log.i("wechat_check_friend", "删除短信联系人");
         ContentResolver cr = context.getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,null, null, null, null);
         while (cur.moveToNext()) {
