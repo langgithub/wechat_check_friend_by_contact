@@ -9,7 +9,7 @@
 
 
 ### 效果
-![image](https://github.com/langgithub/wechat_check_friend_by_contact/blob/master/wx.gif)
+   ![image](https://github.com/langgithub/wechat_check_friend_by_contact/blob/master/wx.gif)
 
 
 ### 难点 
@@ -23,7 +23,7 @@
 
 
 
-总：无法实时返回数据,但是不封号，但是有时返回不了数据，但是比UIAutomation快。可以线下撞库和线上辅助UIAutomation
+总：无法实时返回数据,但是不封号，但是比UIAutomation快。可以线下撞库和线上辅助UIAutomation
 
 
 
