@@ -9,7 +9,7 @@
 
 
 ### 效果
-![image](https://github.com/Yesi-hoang/TaoBaoTopLine/blob/master/Gif/TaoBaoTopLineGif.gif)
+![image](https://github.com/langgithub/wechat_check_friend_by_contact/blob/master/wx.gif)
 
 
 ### 难点 
