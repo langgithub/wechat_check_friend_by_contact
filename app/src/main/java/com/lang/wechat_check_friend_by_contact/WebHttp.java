@@ -1,5 +1,7 @@
 package com.lang.wechat_check_friend_by_contact;
 
+import android.util.Log;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,6 +22,7 @@ public class WebHttp {
      * @return
      */
     public static String getContent(String URL_PATH) {
+        Log.i("wechat_check_friend",URL_PATH);
         ByteArrayOutputStream byteArrayOutputStream=null;
         InputStream inputStream = null;
         HttpURLConnection httpURLConnection = null;

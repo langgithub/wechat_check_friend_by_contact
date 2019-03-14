@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private WebHttp webHttp = null;
     //我也不知道
     private TelephonyManager phone = null;
+    private String ip="http://47.96.170.1:55555";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,10 +62,12 @@ public class MainActivity extends AppCompatActivity {
      * @param v
      */
     public void addContact(View v) {
+        Toast toast=Toast.makeText(getApplicationContext(), "addContact", Toast.LENGTH_SHORT);
+        toast.show();
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String urlGetPhone = "http://172.17.2.156:5000/get_one";
+                String urlGetPhone = ip+"/get_one";
                 String buffer = webHttp.getContent(urlGetPhone);
                 if (buffer != null) {
                     //获取到联系人，将其添加到通讯录
@@ -119,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                     boolean running = true;
                     while (running) {
                         //访问接口获取联系人
-                        String urlGetPhone = "http://172.17.2.156:5000/get_phone";
+                        String urlGetPhone = ip+"/get_phone";
                         String buffer = webHttp.getContent(urlGetPhone);
 //                        String buffer ='["15922605010", "13193118499", "13553428187", "15917528651", "13802950250", "13911115083", "18688386944", "13643070615", "15027713709", "15699082020"]';
                         if (buffer != null) {
@@ -145,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
                                 Log.i("wechat_check_friend", "sleep2000 防止微信网络请求异常导致微信好友添加没刷新完");
                                 Thread.sleep(2000);
                                 if (!"".equals(data)){
-                                    String saveUrl = "http://172.17.2.156:5000/save_data?data="+data;
+                                    String saveUrl = ip+"/save_data?data="+data;
                                     String result = webHttp.getContent(saveUrl);
                                     if (result==null){
                                         running = false;
@@ -165,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
                                 Log.i("wechat_check_friend", "deleteContactsleep2000,激活触发微信添加更多activity");
                                 Thread.sleep(2000);
                                 if (!"".equals(data)){
-                                    String saveUrl = "http://172.17.2.156:5000/save_data?data="+data;
+                                    String saveUrl = ip+"/save_data?data="+data;
                                     String result = webHttp.getContent(saveUrl);
                                     if (result==null){
                                         running = false;
