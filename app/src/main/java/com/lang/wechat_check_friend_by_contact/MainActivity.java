@@ -1,8 +1,12 @@
 package com.lang.wechat_check_friend_by_contact;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -35,6 +39,17 @@ public class MainActivity extends AppCompatActivity {
         this.command = new Command();
         this.webHttp = new WebHttp();
         this.phone = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+
+        // Android权限获取
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_PHONE_STATE},10001);
+        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_CONTACTS},10002);
+        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_PHONE_STATE},10003);
+        }
     }
 
     /**
