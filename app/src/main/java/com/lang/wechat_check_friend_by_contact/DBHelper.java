@@ -1,6 +1,7 @@
 package com.lang.wechat_check_friend_by_contact;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import net.sqlcipher.Cursor;
@@ -8,12 +9,52 @@ import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteDatabaseHook;
 
 import java.io.File;
+import java.security.MessageDigest;
+import java.sql.Blob;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by yuanlang on 2019/3/12.
  */
 
 public class DBHelper {
+
+    String bLs = "";
+    public int drx = -1;
+    public String exO = "";
+    public int huC = 0;
+    public String huz = "";
+    public String iJI = "";
+    long iJJ = 0;
+    public String iJK = "";
+    public String iJL = "";
+    String iJM = "";
+    String iJN = "";
+    public String iJO = "";
+    public int iJP = 0;
+    public byte[] iJQ;
+    public int iJR;
+    public String iJS = "";
+    public int iJT = 0;
+    public String iJU = "";
+    public String iJV = "";
+    public String iJW = "";
+    int iJX = 0;
+    public String iJY = "";
+    int iJZ = 0;
+    int iKa = 0;
+    String iKb = "";
+    public String iKc = "";
+    String iKd = "";
+    int iKe = -1;
+    String iKf = "";
+    long iKg = -1;
+    int iKh = -1;
+    String iKi = "";
+    String iKj = "";
+    String iKk = "";
+    public long iKl = 0;
 
     /**
      * 连接数据库
@@ -44,24 +85,22 @@ public class DBHelper {
 //             Cursor c1 = db.rawQuery("select * from rcontact where verifyFlag = 0  and type != 4 and type != 2 and type !=33 limit 20, 9999", null);
 //            Cursor c1 = db.rawQuery("select * from rcontact where username not like 'gh_%' and verifyFlag<>24 and verifyFlag<>29 and verifyFlag<>56 and type<>33 and type<>70 and verifyFlag=0 and type<>4 and type<>0 and showHead<>43 and type<>65536",null);
 
-//            Cursor c1 = db.rawQuery("select * from sqlite_master; ",null);
-//            while (c1.moveToNext()) {
-//
-//                String sql = c1.getString(c1.getColumnIndex("sql"));
-//                String type = c1.getString(c1.getColumnIndex("type"));
-//                String name = c1.getString(c1.getColumnIndex("name"));
-//                String tbl_name = c1.getString(c1.getColumnIndex("tbl_name"));
-//                String rootpage = c1.getString(c1.getColumnIndex("rootpage"));
-//                System.out.println(sql+";");
-//
-//            }
+//            c1 = db.rawQuery("select * from sqlite_master; ",null);
+            Map map =new HashMap<>();
+            c1 = db.rawQuery("select * from img_flag; ",null);
+            while (c1.moveToNext()) {
+                String name = c1.getString(0);
+                String img = c1.getString(3);
+//                System.out.println(name+";"+img);
+                map.put(name,img);
+            }
 
 
             c1= db.rawQuery("select * from addr_upload2; ",null);
             int count=0;
             while (c1.moveToNext()) {
 
-                String id = c1.getString(c1.getColumnIndex("id"));
+                String id = c1.getString(0);
                 String md5 = c1.getString(c1.getColumnIndex("md5"));
                 String peopleid = c1.getString(c1.getColumnIndex("peopleid"));
                 String uploadtime = c1.getString(c1.getColumnIndex("uploadtime"));
@@ -80,7 +119,32 @@ public class DBHelper {
                 String reserved2 = c1.getString(c1.getColumnIndex("reserved2"));
                 String reserved3 = c1.getString(c1.getColumnIndex("reserved3"));
                 String reserved4 = c1.getString(c1.getColumnIndex("reserved4"));
-                String lvbuf = "blob";
+                byte[] lvbuf = c1.getBlob(19);
+                C8940z zVar = new C8940z();
+                int c = zVar.mo14099cr(lvbuf);
+                this.iJS = zVar.getString();
+                // 性别
+                this.iJT = zVar.getInt();
+                this.iJU = zVar.getString();
+                this.iJV = zVar.getString();
+                this.iJW = zVar.getString();
+                this.iJX = zVar.getInt();
+                this.iJY = zVar.getString();
+                this.iJZ = zVar.getInt();
+                this.iKa = zVar.getInt();
+                this.iKb = zVar.getString();
+                this.iKc = zVar.getString();
+                this.iKd = zVar.getString();
+                this.iKe = zVar.getInt();
+                this.iKf = zVar.getString();
+                this.iKg = zVar.getLong();
+                this.iKh = zVar.getInt();
+                this.iKi = zVar.getString();
+                this.iKj = zVar.getString();
+                this.iKk = zVar.getString();
+                this.iKl = zVar.getLong();
+
+
                 String showhead = c1.getString(c1.getColumnIndex("showhead"));
 
 
@@ -91,8 +155,13 @@ public class DBHelper {
                         +" >>> "+reserved4+" >>> "+lvbuf+" >>> "+showhead);
                 count++;
                 data+="{\"phone\":"+moblie+",\"wxid\":\""+username+"\"},";
+                System.out.println(username);
+                System.out.println(map.get(username));
+//                System.out.println(WeChatUtils.prefile);
+//                System.out.println(WeChatUtils.decryptionWechatUserAvatarImage(username, WeChatUtils.prefile));
 
             }
+            System.out.println(map.toString());
             data=data.substring(0,data.length()-1);
             data+="]}";
             Log.i("wechat_check_friend",data);
@@ -109,6 +178,7 @@ public class DBHelper {
         }
         return data;
     }
+
 
     /**
      * 连接数据库

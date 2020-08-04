@@ -18,6 +18,8 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by yuanlang on 2019/3/12.
@@ -26,6 +28,7 @@ import java.util.List;
 public class WeChatUtils {
 
     public static final String WX_ROOT_PATH = "/data/data/com.tencent.mm/";
+    public static String prefile = "";
 
     // U ID 文件路径
     private static final String WX_SP_UIN_PATH = WX_ROOT_PATH + "shared_prefs/auth_info_key_prefs.xml";
@@ -192,12 +195,70 @@ public class WeChatUtils {
                 //将微信数据库拷贝出来，因为直接连接微信的db，会导致微信崩溃
                 f.copyFile(file.getAbsolutePath(), copyFilePath);
                 File copyWxDataDb = new File(copyFilePath);
+                //MicroMsg/4a9a1349411d7bb9d96ec7db3d82479d/EnMicroMsg.db
+                Pattern pattern = Pattern.compile("MicroMsg/(.*?)/EnMicroMsg");
+                Matcher matcher = pattern.matcher(file.getAbsolutePath());
+                if (matcher.find()){
+                    String a = matcher.group(1);
+                    System.out.println(a);
+                    prefile = a;
+                }
+                System.out.println("weixin path>>>>>>>>"+file.getAbsolutePath());
                 System.out.println("copy path>>>>>>>>"+copyFilePath);
                 //直接返回，没有多账号登陆
                 return dbHelper.openWxDb(copyWxDataDb,password,context);
             }
         }
         return "";
+    }
+
+    public static String decryptionWechatUserAvatarImage(String userName,String defile) {
+        //根据微信的 WechatBean的userName然后使用md5加密，成字符串，再截取前面两个字段的文件目录
+        String decryptionWechatMd5 = decryptionWechatMd5(userName.getBytes());
+        //decryptionWechatMd5  5f39b18498a4107de947dc9b1e5d29b2
+        String decryptionWechatSubString = decryptionWechatSubString(decryptionWechatMd5);
+        //decryptionWechatSubString  5f/39/
+        String imagePath = "/data/user/0/com.tencent.mm/MicroMsg/" + defile + "/avatar/" + decryptionWechatSubString + "user_" + decryptionWechatMd5+".png";
+        // /data/user/0/com.tencent.mm/MicroMsg/1306e8eb3f168108d6f138fd6dbc511e/avatar/5f/39/user_5f39b18498a4107de947dc9b1e5d29b2.png
+        //这个就是当前用户的头像地址
+        return imagePath;
+    }
+
+    /**
+     *
+     *微信Md5解密
+     */
+    public static final String decryptionWechatMd5(byte[] bArr) {
+        char[] cArr = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+        try {
+            MessageDigest instance = MessageDigest.getInstance("MD5");
+            instance.update(bArr);
+            byte[] digest = instance.digest();
+            int length = digest.length;
+            char[] cArr2 = new char[(length * 2)];
+            int i = 0;
+            int i2 = 0;
+            while (i < length) {
+                byte b = digest[i];
+                int i3 = i2 + 1;
+                cArr2[i2] = cArr[(b >>> 4) & 15];
+                int i4 = i3 + 1;
+                cArr2[i3] = cArr[b & 15];
+                i++;
+                i2 = i4;
+            }
+            return new String(cArr2);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+
+    public static String decryptionWechatSubString(String str) {
+        if (!TextUtils.isEmpty(str) && str.length() > 4) {
+            return str.substring(0, 2) + "/" + str.substring(2, 4) + "/";
+        }
+        return null;
     }
 
 }
